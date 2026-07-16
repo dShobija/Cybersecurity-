@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shobija Dhas — QA &amp; SOC Security Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f10;
+    --panel:#10161a;
+    --panel-2:#141c20;
+    --line:#223038;
+    --text:#dbe6e6;
+    --text-dim:#8fa3a3;
+    --signal:#39ff9c;
+    --signal-dim:#1f7a54;
+    --amber:#ffb454;
+    --red:#ff5c5c;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Manrope', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--signal-dim); color:#fff;}
+
+  /* scanline texture */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.014) 0px,
+      rgba(255,255,255,0.014) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index:2;
+    opacity:0.5;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  .mono{font-family:var(--mono);}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    z-index:50;
+    background:rgba(11,15,16,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1100px; margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--mono); font-weight:600; font-size:15px;
+    color:var(--text); display:flex; align-items:center; gap:9px;
+    letter-spacing:0.02em;
+  }
+  .logo .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 8px var(--signal);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;} 50%{opacity:0.35;}
+  }
+  .navlinks{display:flex; gap:32px; font-family:var(--mono); font-size:13px;}
+  .navlinks a{color:var(--text-dim); transition:color 0.2s; position:relative;}
+  .navlinks a:hover{color:var(--signal);}
+  .navlinks a::before{content:"./"; color:var(--signal-dim);}
+  @media (max-width:640px){ .navlinks{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding-top:100px; padding-bottom:60px;
+  }
+  .terminal-tag{
+    font-family:var(--mono); font-size:12.5px; color:var(--signal);
+    border:1px solid var(--signal-dim);
+    background:rgba(57,255,156,0.06);
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 12px; border-radius:3px;
+    margin-bottom:28px;
+    width:fit-content;
+  }
+  .terminal-tag .blink{
+    width:6px; height:6px; background:var(--signal); border-radius:50%;
+    animation:pulse 1.4s step-start infinite;
+  }
+  .hero h1{
+    font-family:var(--sans); font-weight:800;
+    font-size:clamp(26px, 3.6vw, 38px);
+    line-height:1.15;
+    letter-spacing:-0.02em;
+    max-width:820px;
+    color:#fff;
+  }
+  .hero h1 .accent{color:var(--signal);}
+  .hero-highlight{
+    background:rgba(57,255,156,0.08);
+    border:1px solid var(--signal-dim);
+    border-radius:6px;
+    padding:18px 22px;
+    margin-bottom:28px;
+    box-shadow:0 0 24px rgba(57,255,156,0.08);
+    display:inline-block;
+  }
+  .hero-tagline{
+    font-family:var(--sans); font-weight:800; font-size:clamp(30px,5vw,52px);
+    color:var(--signal); margin-bottom:14px; letter-spacing:-0.02em; line-height:1.1;
+  }
+  .hero-eyebrow{
+    font-family:var(--mono); font-size:clamp(14px,2vw,18px); font-weight:700;
+    color:var(--signal); letter-spacing:0.04em; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap; row-gap:8px;
+  }
+  .hero-eyebrow .eyebrow-arrow{color:var(--text-dim); font-weight:700;}
+  @media (max-width:640px){
+    .hero-eyebrow{font-size:12.5px;}
+    .hero-highlight{padding:16px 18px;}
+  }
+  .hero p.sub{
+    font-family:var(--mono);
+    color:var(--text-dim);
+    font-size:15px;
+    max-width:560px;
+    margin-top:22px;
+    border-left:2px solid var(--signal-dim);
+    padding-left:14px;
+  }
+  .hero .status-line{
+    margin-top:36px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-dim);
+    display:flex; flex-wrap:wrap; gap:22px;
+  }
+  .hero .status-line span{display:flex; align-items:center; gap:7px;}
+  .hero .status-line .ok{color:var(--signal);}
+  .hero-cta{
+    display:flex; gap:16px; margin-top:40px; flex-wrap:wrap;
+  }
+  .btn{
+    font-family:var(--mono); font-size:13.5px; font-weight:500;
+    padding:13px 24px; border-radius:3px;
+    border:1px solid var(--line);
+    display:inline-flex; align-items:center; gap:8px;
+    transition:all 0.2s;
+  }
+  .btn-primary{
+    background:var(--signal); color:#04140c; border-color:var(--signal);
+    font-weight:700;
+  }
+  .btn-primary:hover{background:#4fffb0; transform:translateY(-1px);}
+  .btn-ghost{color:var(--text); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--signal-dim); color:var(--signal);}
+
+  /* ---------- SECTION LABELS ---------- */
+  .sec-label{
+    font-family:var(--mono); font-size:12.5px; color:var(--signal);
+    text-transform:uppercase; letter-spacing:0.12em;
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:14px;
+  }
+  .sec-label::before{content:"//"; color:var(--signal-dim);}
+  .sec-title{
+    font-family:var(--sans); font-weight:800; font-size:clamp(26px,3.4vw,36px);
+    color:#fff; margin-bottom:44px; letter-spacing:-0.01em;
+  }
+  section{padding:100px 0; border-top:1px solid var(--line); position:relative;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:1.2fr 1fr; gap:60px;
+  }
+  @media (max-width:800px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{color:var(--text-dim); font-size:15.5px; margin-bottom:16px;}
+  .about-grid strong{color:var(--text); font-weight:600;}
+  .stat-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:24px;
+  }
+  .stat-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:14px 0; border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+  }
+  .stat-row:last-child{border-bottom:none;}
+  .stat-row .label{color:var(--text-dim); font-size:13px;}
+  .stat-row .val{color:var(--signal); font-weight:700; font-size:15px;}
+
+  /* ---------- SKILLS ---------- */
+  .skill-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  .skill-card{
+    background:var(--panel); padding:22px;
+    transition:background 0.2s;
+  }
+  .skill-card:hover{background:var(--panel-2);}
+  .skill-card .tool{
+    font-family:var(--mono); font-weight:600; font-size:14.5px; color:var(--text);
+    display:flex; align-items:center; gap:9px; margin-bottom:6px;
+  }
+  .skill-card .tool::before{content:"›"; color:var(--signal);}
+  .skill-card .desc{font-size:12.5px; color:var(--text-dim); font-family:var(--mono);}
+
+  /* ---------- EXPERIENCE / LOG ---------- */
+  .log-entry{
+    display:grid; grid-template-columns:150px 1fr; gap:28px;
+    padding:28px 0; border-bottom:1px solid var(--line);
+  }
+  .log-entry:last-child{border-bottom:none;}
+  @media (max-width:700px){ .log-entry{grid-template-columns:1fr; gap:10px;} }
+  .log-time{
+    font-family:var(--mono); font-size:12.5px; color:var(--signal-dim);
+    padding-top:3px;
+  }
+  .log-time .yr{color:var(--signal); display:block; font-size:13px; font-weight:600; margin-bottom:4px;}
+  .log-body h3{font-size:18px; font-weight:700; color:#fff; margin-bottom:6px;}
+  .log-body .role{font-family:var(--mono); font-size:12.5px; color:var(--text-dim); margin-bottom:12px;}
+  .log-body ul{padding-left:18px; color:var(--text-dim); font-size:14.5px;}
+  .log-body ul li{margin-bottom:6px;}
+  .log-body ul li::marker{color:var(--signal);}
+
+  /* ---------- PROJECTS ---------- */
+  .project-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:30px; margin-bottom:20px;
+    position:relative; overflow:hidden;
+  }
+  .project-card::before{
+    content:""; position:absolute; top:0; left:0; width:3px; height:100%;
+    background:var(--signal); opacity:0.7;
+  }
+  .project-head{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:14px;}
+  .project-head h3{font-size:20px; color:#fff; font-weight:700;}
+  .project-tag{
+    font-family:var(--mono); font-size:11px; color:var(--signal);
+    border:1px solid var(--signal-dim); padding:4px 10px; border-radius:20px;
+    white-space:nowrap;
+  }
+  .project-card p{color:var(--text-dim); font-size:14.5px; margin-bottom:16px;}
+  .tech-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .tech-pill{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    background:var(--panel-2); border:1px solid var(--line);
+    padding:5px 10px; border-radius:3px;
+  }
+  .module-list{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:8px; margin-top:16px; margin-bottom:16px;
+  }
+  .module-list span{
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    background:var(--bg); border:1px solid var(--line);
+    padding:8px 10px; border-radius:3px;
+  }
+  .module-list span::before{content:"▸ "; color:var(--signal-dim);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:50px; text-align:center;
+    position:relative;
+  }
+  .contact-panel h2{
+    font-size:clamp(26px,4vw,38px); font-weight:800; color:#fff; margin-bottom:16px;
+  }
+  .contact-panel p{color:var(--text-dim); font-size:15px; margin-bottom:32px; max-width:480px; margin-left:auto; margin-right:auto;}
+  .contact-links{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+  footer{
+    padding:32px 0; text-align:center;
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    border-top:1px solid var(--line);
+  }
+  footer .dot{color:var(--signal);}
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity 0.6s ease, transform 0.6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--signal); outline-offset:2px;
+  }
+
+  /* ---------- TERMINAL DEMO ---------- */
+  .term-window{
+    background:#080b0c; border:1px solid var(--line); border-radius:8px;
+    overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .term-bar{
+    background:var(--panel-2); padding:11px 16px;
+    display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .term-dot{width:11px; height:11px; border-radius:50%;}
+  .term-dot.r{background:#ff5f56;}
+  .term-dot.y{background:#ffbd2e;}
+  .term-dot.g{background:#27c93f;}
+  .term-bar .term-title{
+    margin-left:10px; font-family:var(--mono); font-size:12px; color:var(--text-dim);
+  }
+  .term-tabs{
+    display:flex; gap:2px; background:var(--panel-2); border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:12px; overflow-x:auto;
+  }
+  .term-tab{
+    padding:10px 16px; color:var(--text-dim); cursor:pointer; white-space:nowrap;
+    border-bottom:2px solid transparent; transition:all 0.2s;
+  }
+  .term-tab.active{color:var(--signal); border-bottom-color:var(--signal); background:rgba(57,255,156,0.05);}
+  .term-tab:hover{color:var(--text);}
+  .term-body{
+    padding:22px 24px; font-family:var(--mono); font-size:13px; line-height:1.75;
+    min-height:340px; max-height:420px; overflow-y:auto;
+  }
+  .term-line{margin-bottom:2px; white-space:pre-wrap; word-break:break-word;}
+  .term-prompt{color:var(--signal);}
+  .term-host{color:var(--amber);}
+  .term-path{color:#7ec8ff;}
+  .term-cmd{color:#fff;}
+  .term-out{color:var(--text-dim);}
+  .term-alert{color:var(--red); font-weight:600;}
+  .term-ok{color:var(--signal);}
+  .term-cursor{
+    display:inline-block; width:7px; height:14px; background:var(--signal);
+    animation:pulse 0.9s step-start infinite; vertical-align:middle; margin-left:2px;
+  }
+  .term-replay{
+    display:flex; align-items:center; gap:10px; margin-top:16px;
+  }
+  .term-replay button{
+    font-family:var(--mono); font-size:12px; color:var(--signal);
+    background:transparent; border:1px solid var(--signal-dim); border-radius:4px;
+    padding:8px 16px; cursor:pointer; transition:all 0.2s;
+  }
+  .term-replay button:hover{background:rgba(57,255,156,0.08);}
+  .term-note{font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-top:14px;}
+
+  .report-meta{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px;
+    overflow:hidden; margin:20px 0 24px;
+  }
+  .report-meta div{background:var(--panel); padding:14px 16px;}
+  .report-meta .k{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;}
+  .report-meta .v{font-family:var(--mono); font-size:13px; color:var(--text); font-weight:600;}
+
+  .finding-row{
+    display:grid; grid-template-columns:160px 1fr; gap:16px;
+    padding:12px 0; border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:13px;
+  }
+  .finding-row:last-child{border-bottom:none;}
+  .finding-row .k{color:var(--text-dim); font-size:11.5px;}
+  .finding-row .v{color:var(--text);}
+  @media(max-width:600px){ .finding-row{grid-template-columns:1fr;} }
+
+  /* ---------- EDIT MODE ---------- */
+  #editToolbar{
+    position:fixed; bottom:20px; right:20px; z-index:100;
+    display:flex; gap:10px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:30px;
+    padding:8px 10px; box-shadow:0 10px 40px rgba(0,0,0,0.5);
+  }
+  #editToolbar button{
+    font-family:var(--mono); font-size:12.5px; font-weight:600;
+    border:none; border-radius:22px; padding:9px 18px; cursor:pointer;
+    display:flex; align-items:center; gap:6px; transition:all 0.2s;
+  }
+  #editToggle{background:var(--signal); color:#04140c;}
+  #editToggle:hover{background:#4fffb0;}
+  #editToggle.on{background:var(--red); color:#2a0000;}
+  #editDownload{background:var(--panel-2); color:var(--text); border:1px solid var(--line) !important; display:none;}
+  #editDownload:hover{border-color:var(--signal-dim) !important; color:var(--signal);}
+  #editHint{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    padding:0 4px; display:none;
+  }
+  body.edit-mode [data-editable]{
+    outline:1px dashed var(--signal-dim);
+    outline-offset:3px;
+    border-radius:2px;
+    cursor:text;
+    transition:background 0.15s;
+  }
+  body.edit-mode [data-editable]:hover{
+    background:rgba(57,255,156,0.06);
+  }
+  body.edit-mode [data-editable]:focus{
+    outline:2px solid var(--signal);
+    background:rgba(57,255,156,0.08);
+  }
+
+  /* ---------- FULL REPORT EXPANDER ---------- */
+  .report-expand{
+    margin-top:18px;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+  .report-expand summary{
+    font-family:var(--mono); font-size:12.5px; font-weight:600; color:var(--signal);
+    cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px;
+    padding:6px 0; user-select:none;
+  }
+  .report-expand summary::-webkit-details-marker{display:none;}
+  .report-expand summary::before{content:"▸"; transition:transform 0.2s; display:inline-block;}
+  .report-expand[open] summary::before{transform:rotate(90deg);}
+  .report-expand summary:hover{color:#4fffb0;}
+  .report-full{
+    margin-top:18px; font-size:13.5px; color:var(--text-dim);
+    background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    padding:24px;
+  }
+  .report-full h4{
+    font-family:var(--mono); font-size:12px; color:var(--signal);
+    text-transform:uppercase; letter-spacing:0.06em;
+    margin:20px 0 10px; padding-top:16px; border-top:1px solid var(--line);
+  }
+  .report-full h4:first-child{margin-top:0; padding-top:0; border-top:none;}
+  .report-full p{margin-bottom:10px; color:var(--text-dim);}
+  .report-full ul, .report-full ol{padding-left:20px; margin-bottom:10px;}
+  .report-full li{margin-bottom:6px;}
+  .report-full li::marker{color:var(--signal-dim);}
+  .report-full .fig{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    font-style:italic; padding:6px 0 6px 14px; border-left:2px solid var(--line);
+    margin:6px 0;
+  }
+  .report-full code, .report-full .code-block{
+    font-family:var(--mono); font-size:12.5px; color:var(--signal);
+    background:var(--panel); border:1px solid var(--line); border-radius:4px;
+    padding:2px 6px;
+  }
+  .report-full .code-block{
+    display:block; padding:14px 16px; margin:10px 0; white-space:pre-wrap;
+    color:#dbe6e6; word-break:break-word;
+  }
+  .report-full table{
+    width:100%; border-collapse:collapse; margin:12px 0; font-size:12.5px;
+  }
+  .report-full table td{
+    border:1px solid var(--line); padding:8px 12px; font-family:var(--mono);
+    color:var(--text-dim);
+  }
+  .report-full table td:first-child{color:var(--text); font-weight:600; width:35%;}
+
+  .doc-embed{
+    margin-bottom:24px; border:1px solid var(--line); border-radius:6px;
+    overflow:hidden; background:var(--panel);
+  }
+  .doc-embed-label{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.06em;
+    padding:10px 14px; border-bottom:1px solid var(--line);
+    background:var(--panel-2);
+  }
+  .doc-embed iframe{
+    width:100%; height:520px; border:none; display:block; background:#fff;
+  }
+  @media (max-width:640px){
+    .doc-embed iframe{height:380px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="dot"></span>shobija.dhas<span style="color:var(--text-dim)">@</span>portfolio</div>
+    <div class="navlinks">
+      <a href="#about">about</a>
+      <a href="#skills">skills</a>
+      <a href="#experience">experience</a>
+      <a href="#projects">projects</a>
+      <a href="#demo">live-demo</a>
+      <a href="#contact">contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero wrap">
+  <div class="terminal-tag"><span class="blink"></span>STATUS: OPEN TO OPPORTUNITIES · IMMEDIATE JOINER</div>
+  <div class="hero-highlight">
+    <div class="hero-tagline">Securing the Digital World, One Step at a Time</div>
+    <div class="hero-eyebrow">QA Engineer <span class="eyebrow-arrow">→</span> Cybersecurity <span class="eyebrow-arrow">→</span> SOC Security Analyst <span class="eyebrow-arrow">→</span> Offensive Security</div>
+  </div>
+  <h1>Hello, I'm Shobija Dhas.</h1>
+  <p class="sub">Manual QA Engineer with 2.5 years in test design, API testing &amp; defect management, now building hands-on SOC skills: IDS rule-writing, Splunk detections, and offensive security labs.</p>
+  <div class="status-line">
+    <span><span class="ok">●</span> 2.5 yrs QA · Accenture (Allstate Insurance, USA)</span>
+    <span><span class="ok">●</span> Kanyakumari, Tamil Nadu</span>
+    <span><span class="ok">●</span> +91 6385538137</span>
+  </div>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Projects →</a>
+    <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-label">01 — about</div>
+    <div class="about-grid">
+      <div class="reveal">
+        <p>I worked as a <strong>Manual QA Engineer – Associate</strong> at Accenture on the <strong>Allstate Insurance (USA)</strong> account, on a 15-member team — executing 150+ manual and API test cases across Quote, Endorsement, Pass Feature Service, and Policy Verification workflows.</p>
+        <p>Along the way I got curious about what happens on the other side of the firewall. That curiosity turned into a real shift: I'm now actively upskilling through <strong>EC-Council SOC Lab, TryHackMe, and Blue Team Labs Online</strong> — writing Snort IDS rules, building Splunk detections, and practising offensive security with Burp Suite and Kali Linux.</p>
+        <p>I care about software that works <strong>and</strong> holds up under attack — because a bug and a vulnerability often start out looking exactly the same.</p>
+      </div>
+      <div class="stat-panel reveal">
+        <div class="stat-row"><span class="label">EXPERIENCE</span><span class="val">2.5 YRS (NOV 2022–APR 2025)</span></div>
+        <div class="stat-row"><span class="label">EMPLOYER</span><span class="val">ACCENTURE</span></div>
+        <div class="stat-row"><span class="label">CLIENT</span><span class="val">ALLSTATE INSURANCE, USA</span></div>
+        <div class="stat-row"><span class="label">CORE ROLE</span><span class="val">MANUAL QA — ASSOCIATE</span></div>
+        <div class="stat-row"><span class="label">GROWTH TRACK</span><span class="val">SOC / SECURITY ANALYST</span></div>
+        <div class="stat-row"><span class="label">AVAILABILITY</span><span class="val">IMMEDIATE</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-label">02 — toolkit</div>
+    <div class="sec-title">Tools &amp; Technologies</div>
+    <div class="skill-grid">
+      <div class="skill-card"><div class="tool">SOAP UI</div><div class="desc">API / SOAP testing</div></div>
+      <div class="skill-card"><div class="tool">Postman</div><div class="desc">REST API validation</div></div>
+      <div class="skill-card"><div class="tool">JIRA</div><div class="desc">Defect tracking &amp; workflow</div></div>
+      <div class="skill-card"><div class="tool">Oracle SQL</div><div class="desc">DB &amp; backend validation</div></div>
+      <div class="skill-card"><div class="tool">Selenium</div><div class="desc">Automation (Java, basic)</div></div>
+      <div class="skill-card"><div class="tool">Jenkins</div><div class="desc">CI/CD pipelines</div></div>
+      <div class="skill-card"><div class="tool">Git / GitHub</div><div class="desc">Version control</div></div>
+      <div class="skill-card"><div class="tool">Snort IDS</div><div class="desc">Intrusion detection</div></div>
+      <div class="skill-card"><div class="tool">Splunk</div><div class="desc">Log monitoring &amp; alerting</div></div>
+      <div class="skill-card"><div class="tool">Wazuh</div><div class="desc">SIEM / host monitoring</div></div>
+      <div class="skill-card"><div class="tool">Nmap</div><div class="desc">Network scanning</div></div>
+      <div class="skill-card"><div class="tool">Burp Suite</div><div class="desc">Web app pentesting</div></div>
+      <div class="skill-card"><div class="tool">Kali Linux</div><div class="desc">Security tooling</div></div>
+      <div class="skill-card"><div class="tool">VirtualBox</div><div class="desc">Lab environments</div></div>
+      <div class="skill-card"><div class="tool">TryHackMe</div><div class="desc">Active learner</div></div>
+      <div class="skill-card"><div class="tool">BTLO</div><div class="desc">Blue Team Labs Online — Active</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-label">03 — timeline</div>
+    <div class="sec-title">Experience</div>
+
+    <div class="log-entry reveal">
+      <div class="log-time"><span class="yr">NOV 2022 — APR 2025</span>ACCENTURE</div>
+      <div class="log-body">
+        <h3>Manual QA Engineer – Associate</h3>
+        <div class="role">Client: Allstate Insurance, USA · Coimbatore, TN · Team size: 15</div>
+        <ul>
+          <li>Executed 150+ manual and API test cases using SOAP UI and Postman, validating JSON/XML payloads across functional, regression, smoke, and integration cycles</li>
+          <li>Designed structured test cases from business requirements covering Quote, Endorsement, Pass Feature Service, and Policy Verification (PV) workflows</li>
+          <li>Reported and tracked defects in JIRA with full reproduction steps, severity, and screenshots; verified fixes post-retest through the STLC</li>
+          <li>Configured Jenkins CI/CD jobs for scheduled execution; validated backend data using Oracle SQL across New Business and Endorsement flows</li>
+          <li>Collaborated with developers and offshore client stakeholders for defect triage and test session support within Agile/Scrum sprints</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="log-entry reveal">
+      <div class="log-time"><span class="yr">2026 — Present</span>SELF-DIRECTED</div>
+      <div class="log-body">
+        <h3>Cybersecurity &amp; SOC Skill-Building</h3>
+        <div class="role">EC-Council SOC Lab · TryHackMe · Blue Team Labs Online · PortSwigger</div>
+        <ul>
+          <li>Built Sentinel-AI, a unified SOC monitoring toolkit integrating IDS monitoring, real-time log alerting, and threat detection</li>
+          <li>Simulated directory traversal attacks and wrote custom Snort IDS rules to detect and alert on unauthorized path access in real time</li>
+          <li>Configured Splunk detection rules and dashboards for SSH brute-force, DoS attacks, Nmap scans, and path traversal</li>
+          <li>Authored formal incident and academic project reports from each lab exercise</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-label">04 — built</div>
+    <div class="sec-title">Projects</div>
+
+    <div class="project-card reveal">
+      <div class="project-head">
+        <h3>Sentinel-AI — Unified Security Monitoring Toolkit</h3>
+        <span class="project-tag">FLAGSHIP</span>
+      </div>
+      <p>A Kali Linux-based SOC dashboard that consolidates ten independent security modules into a single Flask application backed by a shared SQLite database — integrating IDS monitoring, real-time log alerting, and threat detection to simulate end-to-end SOC analyst operations.</p>
+      <div class="module-list">
+        <span>Port Scanner</span>
+        <span>Packet Sniffer / IDS</span>
+        <span>File Integrity Monitor</span>
+        <span>Web Vuln Scanner</span>
+        <span>Password Cracker</span>
+        <span>Keylogger Detector</span>
+        <span>Phishing Detector</span>
+        <span>Firewall Simulator</span>
+        <span>Encrypted Chat</span>
+        <span>AI Triage Agent</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-pill">Python</span>
+        <span class="tech-pill">Flask</span>
+        <span class="tech-pill">SQLite</span>
+        <span class="tech-pill">Snort IDS</span>
+        <span class="tech-pill">Splunk</span>
+        <span class="tech-pill">Wazuh</span>
+        <span class="tech-pill">Burp Suite</span>
+        <span class="tech-pill">Kali Linux</span>
+        <span class="tech-pill">Claude API</span>
+      </div>
+      <a href="#demo" class="btn btn-ghost" style="margin-top:6px;">▶ See it run in the live demo →</a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-head">
+        <h3>Intrusion Detection &amp; Directory Traversal Monitoring — Snort IDS</h3>
+        <span class="project-tag">LAB REPORT</span>
+      </div>
+      <p>Designed, deployed, and validated a network-based IDS using Snort against a directory traversal attack. Built a two-machine VirtualBox lab — Ubuntu Server running Apache2 as the target, Kali Linux as the attacker — wrote a custom Snort rule, and confirmed real-time detection.</p>
+      <div class="report-meta">
+        <div><div class="k">Target Host</div><div class="v">Ubuntu Server · 10.0.2.10</div></div>
+        <div><div class="k">Attacker Host</div><div class="v">Kali Linux 2025.3 · 10.0.2.11</div></div>
+        <div><div class="k">Monitored Service</div><div class="v">Apache2 · Port 80</div></div>
+        <div><div class="k">Detection Engine</div><div class="v">Snort 2.9.20 GRE</div></div>
+      </div>
+      <div class="finding-row"><span class="k">ATTACK VECTOR</span><span class="v">curl "http://10.0.2.10/test?file=../../../etc/passwd"</span></div>
+      <div class="finding-row"><span class="k">ALERT SIGNATURE</span><span class="v">DIRECTORY TRAVERSAL ATTACK DETECTED (SID 1000001)</span></div>
+      <div class="finding-row"><span class="k">RESULT</span><span class="v">Apache2 returned 404 · Snort flagged the traversal pattern in real time</span></div>
+      <div class="tech-row" style="margin-top:16px;">
+        <span class="tech-pill">Snort IDS</span>
+        <span class="tech-pill">Ubuntu Server</span>
+        <span class="tech-pill">Kali Linux</span>
+        <span class="tech-pill">VirtualBox</span>
+        <span class="tech-pill">Apache2</span>
+      </div>
+      <details class="report-expand">
+        <summary>Read Full Project Report</summary>
+        <div class="report-full">
+          <h4>1. Abstract</h4>
+          <p>This project demonstrates the design, deployment, and validation of a network-based Intrusion Detection System (IDS) using Snort, aimed at detecting directory traversal attacks against a web server. A two-machine virtual lab was built using Oracle VirtualBox, consisting of an Ubuntu Server hosting an Apache2 web application (the target) and a Kali Linux workstation acting as the attacker. Snort was installed and configured on the target host, and a custom detection rule was written to identify directory traversal patterns in incoming HTTP traffic. An attack was then simulated from the attacker machine using a crafted HTTP request, and the IDS successfully detected and logged the intrusion attempt in real time.</p>
+
+          <h4>2. Objectives</h4>
+          <ul>
+            <li>Set up a two-node isolated virtual lab environment for offensive/defensive security practice</li>
+            <li>Deploy and configure a web server (Apache2) as a monitored target</li>
+            <li>Install and configure Snort IDS on the target host for network traffic inspection</li>
+            <li>Author a custom Snort rule capable of detecting directory traversal attack patterns</li>
+            <li>Simulate a real-world directory traversal attack from an attacker machine</li>
+            <li>Validate that the IDS accurately detects and logs the simulated attack in real time</li>
+            <li>Document the exercise as a reusable, repeatable methodology for future detection-engineering practice</li>
+          </ul>
+
+          <h4>3. Tools &amp; Technologies</h4>
+          <table>
+            <tr><td>Virtualization Platform</td><td>Oracle VirtualBox</td></tr>
+            <tr><td>Target OS</td><td>Ubuntu Server (Linux)</td></tr>
+            <tr><td>Attacker OS</td><td>Kali Linux 2025.3</td></tr>
+            <tr><td>Web Server</td><td>Apache2 2.4.58</td></tr>
+            <tr><td>IDS Engine</td><td>Snort 2.9.20 GRE (Build 82)</td></tr>
+            <tr><td>Attack Tool</td><td>curl (HTTP request crafting)</td></tr>
+            <tr><td>Editor</td><td>GNU nano (rule authoring)</td></tr>
+            <tr><td>Networking</td><td>VirtualBox NAT network, ip / systemctl / apt CLI utilities</td></tr>
+          </table>
+
+          <h4>4. Lab Topology</h4>
+          <p>The lab consists of two virtual machines connected over an isolated VirtualBox network. The Ubuntu Server (10.0.2.10) hosts the Apache2 web service and runs the Snort IDS, monitoring all inbound traffic on interface enp0s3. The Kali Linux machine (10.0.2.11) acts as the attacker, sending crafted HTTP requests toward the target over interface eth0 — mirroring a simplified real-world scenario in which a SOC analyst monitors a web-facing server for malicious inbound traffic.</p>
+          <table>
+            <tr><td>Target Host</td><td>Ubuntu Server — IP 10.0.2.10 (enp0s3)</td></tr>
+            <tr><td>Attacker Host</td><td>Kali Linux — IP 10.0.2.11 (eth0)</td></tr>
+            <tr><td>Monitored Service</td><td>Apache2 HTTP — Port 80</td></tr>
+            <tr><td>Detection Point</td><td>Snort IDS, inline on target's network interface</td></tr>
+          </table>
+
+          <h4>5. Methodology</h4>
+          <p><strong>5.1 Network Configuration Verification</strong> — Verified IP configuration of both VMs using <code>ip a</code> to confirm connectivity before service deployment.</p>
+          <div class="fig">Fig 1–2: Ubuntu server &amp; Kali attacker network configuration verified</div>
+          <p><strong>5.2 System Update</strong> — Updated the Ubuntu server's package repository via <code>sudo apt update</code>.</p>
+          <div class="fig">Fig 3: Package repository update on the Ubuntu server</div>
+          <p><strong>5.3 Apache2 Installation</strong> — Installed and configured Apache2 as the target web application.</p>
+          <div class="fig">Fig 4–7: Apache2 installed, service enabled via systemctl, default page reachable at http://10.0.2.10</div>
+          <p><strong>5.4 Snort Installation &amp; Verification</strong> — Installed Snort on the Ubuntu server and verified the version.</p>
+          <div class="fig">Fig 8–9: Snort IDS installed; version confirmed — Snort 2.9.20 GRE (Build 82)</div>
+          <p><strong>5.5 Custom Rule Development</strong> — Authored a custom rule in <code>/etc/snort/rules/local.rules</code> to detect directory traversal attempts on TCP port 80:</p>
+          <div class="code-block">alert tcp any any -&gt; $HOME_NET 80 (msg:"DIRECTORY TRAVERSAL ATTACK DETECTED";
+content:"../"; nocase; sid:1000001; rev:1;)</div>
+          <div class="fig">Fig 10–11: Rule authored in nano; SID 1000001 added to local.rules</div>
+          <p><strong>5.6 Configuration Testing</strong> — Validated the Snort config in test mode to confirm the rule set and preprocessors loaded without error.</p>
+          <div class="fig">Fig 12–13: Snort test-mode initialized and validated successfully</div>
+          <p><strong>5.7 Live Monitoring Deployment</strong> — Launched Snort in live console alert mode, monitoring interface enp0s3 against the rule set.</p>
+          <div class="fig">Fig 14: Snort running in live console monitoring mode</div>
+
+          <h4>6. Results</h4>
+          <p>A directory traversal attack was simulated from Kali Linux using a crafted request attempting to access <code>/etc/passwd</code>:</p>
+          <div class="code-block">curl "http://10.0.2.10/test?file=../../../etc/passwd"</div>
+          <p>Apache2 correctly returned a 404 Not Found (confirming no application-layer vulnerability was exploited), while Snort successfully detected the traversal pattern in network traffic and generated a real-time alert:</p>
+          <table>
+            <tr><td>Alert Signature</td><td>DIRECTORY TRAVERSAL ATTACK DETECTED</td></tr>
+            <tr><td>Signature ID (SID)</td><td>1000001</td></tr>
+            <tr><td>Source IP</td><td>10.0.2.11 (Kali Linux attacker)</td></tr>
+            <tr><td>Destination IP</td><td>10.0.2.10 (Ubuntu Server)</td></tr>
+            <tr><td>Destination Port</td><td>80/TCP (HTTP)</td></tr>
+            <tr><td>Alert Timestamp</td><td>07/11 – 09:11:21.202778</td></tr>
+          </table>
+          <div class="fig">Fig 15: Snort alert confirming successful detection of the simulated attack</div>
+
+          <h4>7. Conclusion</h4>
+          <p>This project demonstrated the complete lifecycle of deploying a network intrusion detection capability — from lab setup and web service configuration to custom rule authoring, configuration validation, and live attack detection. Snort correctly identified the simulated directory traversal attack, validating both the detection logic and the overall monitoring workflow, and strengthened practical skills in IDS configuration, Snort rule syntax, and SOC-style detection validation.</p>
+
+          <h4>8. Future Scope</h4>
+          <ul>
+            <li>Extend the rule set to detect additional attack classes such as SQL injection, XSS, and brute-force login attempts</li>
+            <li>Integrate Snort's alert output with a centralized dashboard for automated, AI-assisted triage of detected events</li>
+            <li>Add support for encoded traversal payloads (URL-encoding, double-encoding) to reduce evasion opportunities</li>
+            <li>Migrate from console/test mode to Snort inline IPS mode for active blocking of malicious traffic</li>
+            <li>Incorporate automated alert correlation and reporting using a Claude API-powered triage layer</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-head">
+        <h3>Unauthorized SSH Login Detection &amp; Alerting — Splunk</h3>
+        <span class="project-tag">LAB REPORT</span>
+      </div>
+      <p>Ingested Ubuntu SSH auth logs into Splunk, built a search to surface failed password attempts, and configured a real-time alert so any unauthorized login attempt triggers immediate notification for rapid response.</p>
+      <div class="finding-row"><span class="k">LOG SOURCE</span><span class="v">/var/log/auth.log (Linux Secure)</span></div>
+      <div class="finding-row"><span class="k">SEARCH QUERY</span><span class="v">source="/var/log/auth.log" "Failed password"</span></div>
+      <div class="finding-row"><span class="k">ALERT TYPE</span><span class="v">Real-time · Severity: Medium</span></div>
+      <div class="tech-row" style="margin-top:16px;">
+        <span class="tech-pill">Splunk</span>
+        <span class="tech-pill">Ubuntu Server</span>
+        <span class="tech-pill">Kali Linux (SSH client)</span>
+      </div>
+      <details class="report-expand">
+        <summary>Read Full Project Report</summary>
+        <div class="report-full">
+          <h4>Step 1 — Connect via SSH in Kali</h4>
+          <p>Initiated an SSH connection from the Kali machine toward the Ubuntu target. An incorrect password at this stage is expected and used deliberately to generate a failed-login event for later detection.</p>
+
+          <h4>Step 2 — Login to Splunk</h4>
+          <p>Logged into the Splunk web interface to begin configuring log ingestion and search.</p>
+
+          <h4>Step 3 — Ensure Ubuntu SSH Logs Are Ingested into Splunk</h4>
+          <ul>
+            <li>Settings → Add Data → Monitor → Files &amp; Directories</li>
+            <li>File or Directory: <code>/var/log/auth.log</code></li>
+            <li>Source Type: Operating System → Linux Secure</li>
+            <li>Review → Submit → Start Searching</li>
+          </ul>
+          <p>Searched for failed SSH login attempts using:</p>
+          <div class="code-block">source="/var/log/auth.log" "Failed password"</div>
+          <p>This search surfaces every recorded event where an incorrect password attempt was made against the SSH service.</p>
+
+          <h4>Step 4 — Configure the Failed-Login Alert</h4>
+          <ul>
+            <li>Save As → Alert</li>
+            <li>Title: Failed log Attempt</li>
+            <li>Description: Detection and alerting of unauthorized SSH login attempts using Splunk</li>
+            <li>Alert type: Real time · Expires: 2 minutes</li>
+            <li>Trigger Action: Add to Triggered Alerts · Severity: Medium → Save</li>
+          </ul>
+          <p>Once saved, any subsequent wrong-password SSH attempt appears immediately on the Splunk Alerts page, allowing the attacker's source details to be tracked via View Results.</p>
+
+          <h4>Conclusion</h4>
+          <p>By setting up this failed-login alert, an immediate notification is generated whenever an unknown person attempts to log in — allowing quick identification of the attacker's details and prompt action to prevent unauthorized access.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-head">
+        <h3>DoS, Nmap &amp; Path Traversal Alerting — Splunk</h3>
+        <span class="project-tag">LAB REPORT</span>
+      </div>
+      <p>Three linked exercises: enabled UFW firewall protection against a simulated SYN flood (DoS) attack, built Splunk searches to surface DoS/UFW events and Nmap reconnaissance, and configured a path traversal alert against a vulnerable PHP endpoint.</p>
+      <div class="finding-row"><span class="k">DOS SIMULATION</span><span class="v">hping3 -S --flood -p 80 (SYN flood via Kali)</span></div>
+      <div class="finding-row"><span class="k">DOS SEARCH</span><span class="v">source="/var/log/kern.log" "UFW ALLOW" DPT=80 | stats count by SRC</span></div>
+      <div class="finding-row"><span class="k">PATH TRAVERSAL TARGET</span><span class="v">view.php?page=../../../etc/passwd</span></div>
+      <div class="tech-row" style="margin-top:16px;">
+        <span class="tech-pill">Splunk</span>
+        <span class="tech-pill">Nmap</span>
+        <span class="tech-pill">UFW Firewall</span>
+        <span class="tech-pill">Kali Linux</span>
+        <span class="tech-pill">Apache2 / PHP</span>
+      </div>
+      <details class="report-expand">
+        <summary>Read Full Project Report</summary>
+        <div class="report-full">
+          <h4>Report A — DoS Attack Alerting</h4>
+          <p><strong>Step 1:</strong> Started the Ubuntu Server and connected to Splunk.</p>
+          <p><strong>Step 2:</strong> Connected to Splunk via Firefox using the target's IP address.</p>
+          <p><strong>Step 3 — Enable the Firewall:</strong></p>
+          <div class="code-block">sudo apt install apache2 -y
+systemctl enable apache2
+sudo systemctl start apache2
+sudo ufw enable</div>
+          <p>Once UFW is enabled, the attacker's IP address gets blocked. From Kali, an SSH connection was established and a SYN flood was simulated:</p>
+          <div class="code-block">sudo hping3 -S --flood -V -p 80 10.0.2.10</div>
+          <p>This overloads the target, causing the Apache web page to slow or fail to reload — <code>Ctrl+C</code> stops the flood so the firewall config can refresh.</p>
+          <p><strong>Step 4 — View DoS Events:</strong> Splunk → Settings → Add Data → Monitor → Files &amp; Directories → <code>/var/log/kern.log</code> → Source Type: Linux Secure → Review → Submit.</p>
+          <div class="code-block">source="/var/log/kern.log" "UFW ALLOW" DPT=80 | stats count by SRC</div>
+          <p><strong>Step 5:</strong> Saved the search as an Alert so any DoS attack event triggers an immediate notification.</p>
+          <p><em>Conclusion:</em> Configuring DoS alerts strengthens the security framework by enabling continuous monitoring of server logs and network activity — abnormal traffic volume is flagged early, minimizing downtime and improving incident response.</p>
+
+          <h4>Report B — Nmap Scan Detection</h4>
+          <p><strong>Step 1–2:</strong> Started the Ubuntu Server and connected to Splunk via Firefox.</p>
+          <p><strong>Step 3 — Alert Setup:</strong> Ran an Nmap scan from Kali against the target, then searched Splunk for <code>UFW Block</code> events. An alert was configured to trigger whenever an Nmap scan is detected.</p>
+          <p><em>Conclusion:</em> Since Nmap is commonly used for reconnaissance ahead of an attack, detecting scan activity early lets the security team respond before exploitation — strengthening the overall monitoring framework.</p>
+
+          <h4>Report C — Path Traversal Alerting</h4>
+          <p><strong>Step 1:</strong> Connected via SSH in Kali and started Splunk:</p>
+          <div class="code-block">sudo /opt/splunk/bin/splunk start --accept-license --answer-yes --run-as-root</div>
+          <p><strong>Step 2:</strong> Confirmed successful Splunk login.</p>
+          <p><strong>Step 3 — Install a vulnerable PHP endpoint:</strong></p>
+          <div class="code-block">sudo apt install php libapache2-mod-php -y</div>
+          <p>Added a <code>view.php</code> file to the web root.</p>
+          <p><strong>Step 4 — Trigger Path Traversal:</strong> From Firefox, navigated to:</p>
+          <div class="code-block">http://10.0.2.10/view.php?page=../../../etc/passwd</div>
+          <p><strong>Step 5 — View Events:</strong> Settings → Add Data → Monitor → Files &amp; Directories → <code>/var/log/apache2/access.log</code> to surface the traversal request in Splunk for alerting.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-label">05 — live demo</div>
+    <div class="sec-title">Sentinel-AI in Action</div>
+    <p style="color:var(--text-dim); font-size:14.5px; margin-top:-28px; margin-bottom:32px; max-width:640px;">A walk-through simulation of all 10 Sentinel-AI modules running across the two-VM lab — Kali Linux as the attacker, Ubuntu Server as the monitored target — from IDS detection to password auditing, phishing analysis, and encrypted analyst comms.</p>
+
+    <div class="term-window reveal">
+      <div class="term-bar">
+        <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+        <span class="term-title">sentinel-ai — kali@attacker → ubuntu-server@target</span>
+      </div>
+      <div class="term-tabs">
+        <div class="term-tab active" data-tab="0">01 · Boot Dashboard</div>
+        <div class="term-tab" data-tab="1">02 · Directory Traversal</div>
+        <div class="term-tab" data-tab="2">03 · SSH Brute-force</div>
+        <div class="term-tab" data-tab="3">04 · DoS + Nmap</div>
+        <div class="term-tab" data-tab="4">05 · File Integrity</div>
+        <div class="term-tab" data-tab="5">06 · Web Vuln Scanner</div>
+        <div class="term-tab" data-tab="6">07 · Password Cracker</div>
+        <div class="term-tab" data-tab="7">08 · Keylogger Detector</div>
+        <div class="term-tab" data-tab="8">09 · Phishing Detector</div>
+        <div class="term-tab" data-tab="9">10 · Encrypted Chat</div>
+      </div>
+      <div class="term-body" id="termBody"></div>
+      <div class="wrap" style="padding:0 24px 20px;">
+        <div class="term-replay">
+          <button id="replayBtn">↻ Replay</button>
+          <span class="term-note">Simulated output for demonstration, reconstructed from the lab reports above — not a live network connection.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="sec-label">06 — credentials</div>
+    <div class="sec-title">Education &amp; Certifications</div>
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="log-entry" style="padding-top:0;">
+          <div class="log-time"><span class="yr">2018–2022</span>ANNA UNIV.</div>
+          <div class="log-body">
+            <h3>B.E. — Civil Engineering</h3>
+            <div class="role">Anna University · 77.6%</div>
+          </div>
+        </div>
+        <div class="log-entry">
+          <div class="log-time"><span class="yr">2018</span>HSC</div>
+          <div class="log-body">
+            <h3>Higher Secondary</h3>
+            <div class="role">St. Francis Hr. Sec. School, Vencode · 65.9%</div>
+          </div>
+        </div>
+        <div class="log-entry" style="border-bottom:none;">
+          <div class="log-time"><span class="yr">2016</span>SSLC</div>
+          <div class="log-body">
+            <h3>SSLC</h3>
+            <div class="role">St. Francis Hr. Sec. School, Vencode · 83%</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-panel reveal">
+        <div class="stat-row"><span class="label">EC-COUNCIL</span><span class="val">SOC LAB</span></div>
+        <div class="stat-row"><span class="label">TRYHACKME</span><span class="val">ACTIVE</span></div>
+        <div class="stat-row"><span class="label">BLUE TEAM LABS ONLINE</span><span class="val">ACTIVE (BTLO)</span></div>
+        <div class="stat-row"><span class="label">PORTSWIGGER LABS</span><span class="val">ACTIVE</span></div>
+        <div class="stat-row"><span class="label">INSURANCE FOUNDATION</span><span class="val">ACCENTURE</span></div>
+        <div class="stat-row"><span class="label">JAVA TRAINING</span><span class="val">ACCENTURE</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-panel reveal">
+      <div class="sec-label" style="justify-content:center;">07 — connect</div>
+      <h2>Let's talk testing, security,<br>or your next hire.</h2>
+      <p>Open to Manual QA and SOC / Security Analyst roles. I reply fast and I'm ready to start immediately.</p>
+      <div class="contact-links">
+        <a href="mailto:dshobija@gmail.com" class="btn btn-primary">✉ dshobija@gmail.com</a>
+        <a href="tel:+916385538137" class="btn btn-ghost">📞 +91 63855 38137</a>
+        <a href="https://www.linkedin.com/in/shobija-d-a0b713297/" target="_blank" class="btn btn-ghost">LinkedIn</a>
+        <a href="https://github.com/dShobija/Cybersecurity-" target="_blank" class="btn btn-ghost">GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="dot">●</span> Portfolio built &amp; maintained by Shobija Dhas · Kanyakumari, TN · <span class="mono">2026</span>
+  </div>
+</footer>
+
+<div id="editToolbar">
+  <span id="editHint">Click any text to edit it</span>
+  <button id="editToggle">✎ Edit Mode</button>
+  <button id="editDownload">⬇ Download HTML</button>
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:0.12});
+  revealEls.forEach(el=>io.observe(el));
+
+  /* ---------- Terminal Demo Simulation ---------- */
+  const scripts = [
+    // 0. Boot Dashboard
+    [
+      {p:'kali', path:'~', cmd:'python3 sentinel_ai/app.py'},
+      {out:' * Sentinel-AI SOC Dashboard starting...'},
+      {out:' * Loading modules: port_scanner, ids_sniffer, file_monitor,'},
+      {out:'   web_scanner, keylogger_detector, phishing_detector,'},
+      {out:'   firewall_sim, encrypted_chat, ai_triage_agent'},
+      {out:' * Connecting to SQLite database... sentinel.db'},
+      {ok:' ✓ 10/10 modules loaded'},
+      {ok:' ✓ Dashboard running at http://127.0.0.1:5000'},
+      {p:'kali', path:'~', cmd:'curl -s http://127.0.0.1:5000/api/status'},
+      {out:'{"status": "online", "modules_active": 10, "db": "connected"}'},
+    ],
+    // 1. Directory Traversal
+    [
+      {p:'kali', path:'~', cmd:'sudo systemctl status snort'},
+      {ok:' ● snort.service - active (running) on target 10.0.2.10'},
+      {p:'kali', path:'~', cmd:'curl "http://10.0.2.10/test?file=../../../etc/passwd"'},
+      {out:'HTTP/1.1 404 Not Found'},
+      {out:''},
+      {p:'ubuntu-server', path:'/var/log/snort', cmd:'tail -f alert'},
+      {alert:'[**] [1:1000001:1] DIRECTORY TRAVERSAL ATTACK DETECTED [**]'},
+      {out:'07/11-09:11:21.202778  10.0.2.11 -> 10.0.2.10:80'},
+      {out:'TCP TTL:64 TOS:0x0 ID:0 IpLen:20 DgmLen:213'},
+      {alert:' ⚠ Sentinel-AI Triage Agent: HIGH severity — traversal pattern "../" matched'},
+      {ok:' ✓ Incident auto-logged to sentinel.db → incident_id: DT-2026-014'},
+    ],
+    // 2. SSH Brute-force
+    [
+      {p:'kali', path:'~', cmd:'ssh admin@10.0.2.10'},
+      {out:'admin@10.0.2.10\'s password: '},
+      {out:'Permission denied, please try again.'},
+      {p:'ubuntu-server', path:'/var/log', cmd:'splunk search \'source="/var/log/auth.log" "Failed password"\''},
+      {out:'Jul 11 09:14:02 ubuntu-server sshd: Failed password for admin from 10.0.2.11 port 51422'},
+      {out:'Jul 11 09:14:05 ubuntu-server sshd: Failed password for admin from 10.0.2.11 port 51430'},
+      {alert:' ⚠ Splunk Alert Triggered: "Failed log Attempt" — severity MEDIUM'},
+      {ok:' ✓ Sentinel-AI notified analyst dashboard in real time'},
+    ],
+    // 3. DoS + Nmap
+    [
+      {p:'kali', path:'~', cmd:'nmap -sS 10.0.2.10'},
+      {out:'PORT   STATE SERVICE'},
+      {out:'22/tcp open  ssh'},
+      {out:'80/tcp open  http'},
+      {alert:' ⚠ Nmap scan detected → UFW BLOCK logged on target'},
+      {p:'kali', path:'~', cmd:'sudo hping3 -S --flood -V -p 80 10.0.2.10'},
+      {out:'HPING 10.0.2.10 (eth0 10.0.2.10): S set, 40 headers + 0 data bytes'},
+      {out:'... flood in progress ...'},
+      {alert:' ⚠ SYN Flood detected — Apache2 response degraded'},
+      {p:'ubuntu-server', path:'~', cmd:'sudo ufw status'},
+      {ok:' ✓ Firewall active — attacker IP 10.0.2.11 blocked'},
+      {ok:' ✓ Sentinel-AI dashboard: DoS incident closed, mitigation confirmed'},
+    ],
+    // 4. File Integrity Monitor
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/file_integrity.py --baseline /etc'},
+      {out:' * Hashing 1,842 files under /etc using SHA-256...'},
+      {ok:' ✓ Baseline snapshot saved to sentinel.db (table: fim_baseline)'},
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/file_integrity.py --scan /etc'},
+      {out:' * Comparing current hashes against baseline...'},
+      {alert:' ⚠ MODIFIED: /etc/passwd (hash mismatch — expected a3f9.. got 71bc..)'},
+      {alert:' ⚠ MODIFIED: /etc/crontab (hash mismatch — modified timestamp changed)'},
+      {out:' * 1,840 files unchanged'},
+      {ok:' ✓ Sentinel-AI Triage Agent: flagged 2 modified files for analyst review'},
+    ],
+    // 5. Web Vulnerability Scanner
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/web_scanner.py --target http://10.0.2.10'},
+      {out:' * Crawling target... 14 endpoints discovered'},
+      {out:' * Testing for SQL Injection, XSS, open redirects...'},
+      {alert:' ⚠ Possible reflected XSS on /search?q= (unsanitized input reflected in response)'},
+      {alert:' ⚠ Missing security headers: X-Frame-Options, Content-Security-Policy'},
+      {out:' * 12/14 endpoints passed baseline checks'},
+      {ok:' ✓ Scan report saved to sentinel.db → scan_id: WS-2026-009'},
+    ],
+    // 6. Password Cracker
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/password_cracker.py --hashfile shadow.hash --wordlist rockyou.txt'},
+      {out:' * Loaded 8 password hashes (SHA-512 crypt)'},
+      {out:' * Testing against rockyou.txt (14,344,391 words)...'},
+      {out:' [====================] 63% — 3 of 8 cracked'},
+      {ok:' ✓ user:admin  →  password: "Summer2025!"'},
+      {ok:' ✓ user:guest  →  password: "guest123"'},
+      {out:' * 6 of 8 hashes cracked in 00:02:14'},
+      {alert:' ⚠ Sentinel-AI flags weak credentials for password-policy review'},
+    ],
+    // 7. Keylogger Detector
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/keylogger_detector.py --scan-processes'},
+      {out:' * Enumerating running processes and hooked input handlers...'},
+      {out:' * Checking for suspicious hidden processes and startup entries...'},
+      {alert:' ⚠ Suspicious process detected: "sysupdate32" — no signature, hooks keyboard input'},
+      {out:' * Process PID 4471, spawned from /tmp/.hidden/'},
+      {ok:' ✓ Process flagged and isolated by Sentinel-AI'},
+      {ok:' ✓ Incident logged → incident_id: KL-2026-003'},
+    ],
+    // 8. Phishing Detector
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/phishing_detector.py --check-url http://accnts-secure-login.com'},
+      {out:' * Analyzing domain age, SSL cert, and URL structure...'},
+      {alert:' ⚠ Domain registered 4 days ago — high-risk indicator'},
+      {alert:' ⚠ Lookalike domain detected — mimics "accounts-secure-login"'},
+      {alert:' ⚠ No valid SSL certificate found'},
+      {out:' * Risk score: 91/100 — classified as PHISHING'},
+      {ok:' ✓ URL added to Sentinel-AI blocklist'},
+    ],
+    // 9. Encrypted Chat
+    [
+      {p:'kali', path:'~/sentinel-ai', cmd:'python3 modules/encrypted_chat.py --start-session analyst_02'},
+      {out:' * Generating session key pair (RSA-2048)...'},
+      {ok:' ✓ Secure channel established with analyst_02'},
+      {p:'kali', path:'~/sentinel-ai', cmd:'> Incident DT-2026-014 confirmed, escalating to L2'},
+      {out:' [encrypted] Message sent — AES-256 session cipher'},
+      {out:' [encrypted] analyst_02: "Acknowledged, isolating host now."'},
+      {ok:' ✓ All messages logged (ciphertext only) to sentinel.db'},
+    ],
+  ];
+
+  const termBody = document.getElementById('termBody');
+  const tabs = document.querySelectorAll('.term-tab');
+  let currentTab = 0;
+  let typing = false;
+
+  function lineHTML(item){
+    if(item.cmd !== undefined){
+      return `<div class="term-line"><span class="term-prompt">${item.p}</span>@<span class="term-host">sentinel</span>:<span class="term-path">${item.path}</span>$ <span class="term-cmd">${item.cmd}</span></div>`;
+    } else if(item.alert !== undefined){
+      return `<div class="term-line term-alert">${item.alert}</div>`;
+    } else if(item.ok !== undefined){
+      return `<div class="term-line term-ok">${item.ok}</div>`;
+    } else {
+      return `<div class="term-line term-out">${item.out}</div>`;
+    }
+  }
+
+  async function playScript(idx){
+    if(typing) return;
+    typing = true;
+    termBody.innerHTML = '';
+    const lines = scripts[idx];
+    for(let i=0;i<lines.length;i++){
+      await new Promise(r=>setTimeout(r, lines[i].cmd !== undefined ? 480 : 220));
+      const div = document.createElement('div');
+      div.innerHTML = lineHTML(lines[i]);
+      termBody.appendChild(div.firstChild);
+      termBody.scrollTop = termBody.scrollHeight;
+    }
+    const cursor = document.createElement('div');
+    cursor.className = 'term-line';
+    cursor.innerHTML = '<span class="term-prompt">kali</span>@<span class="term-host">sentinel</span>:<span class="term-path">~</span>$ <span class="term-cursor"></span>';
+    termBody.appendChild(cursor);
+    typing = false;
+  }
+
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      if(typing) return;
+      tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTab = parseInt(tab.dataset.tab);
+      playScript(currentTab);
+    });
+  });
+
+  document.getElementById('replayBtn').addEventListener('click', ()=>playScript(currentTab));
+
+  // Autoplay first script when demo section scrolls into view
+  const demoSection = document.getElementById('demo');
+  let demoPlayed = false;
+  const demoIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting && !demoPlayed){
+        demoPlayed = true;
+        playScript(0);
+        demoIO.unobserve(e.target);
+      }
+    });
+  },{threshold:0.2});
+  if(demoSection) demoIO.observe(demoSection);
+
+  /* ---------- Edit Mode ---------- */
+  const editToggle = document.getElementById('editToggle');
+  const editDownload = document.getElementById('editDownload');
+  const editHint = document.getElementById('editHint');
+  let editableEls = [];
+
+  const EDITABLE_SELECTOR = 'h1, h2, h3, p, li, .logo, .terminal-tag, .status-line span, .val, .label, .role, .desc, .tool, .tech-pill, .project-tag, .k, .v, .term-note, footer .wrap';
+
+  function collectEditables(){
+    // avoid nested duplicates (e.g. li inside ul inside p) — pick innermost text-bearing leaves
+    const all = document.querySelectorAll(EDITABLE_SELECTOR);
+    const result = [];
+    all.forEach(el=>{
+      // skip if it's inside the edit toolbar itself
+      if(el.closest('#editToolbar')) return;
+      // skip container elements that themselves contain other editable-selector matches (avoid double nesting)
+      const hasEditableChild = Array.from(el.querySelectorAll(EDITABLE_SELECTOR)).length > 0;
+      if(hasEditableChild) return;
+      result.push(el);
+    });
+    return result;
+  }
+
+  function enterEditMode(){
+    document.body.classList.add('edit-mode');
+    editableEls = collectEditables();
+    editableEls.forEach(el=>{
+      el.setAttribute('contenteditable','true');
+      el.setAttribute('data-editable','true');
+    });
+    editToggle.textContent = '✕ Exit Edit Mode';
+    editToggle.classList.add('on');
+    editDownload.style.display = 'flex';
+    editHint.style.display = 'inline';
+  }
+
+  function exitEditMode(){
+    document.body.classList.remove('edit-mode');
+    editableEls.forEach(el=>{
+      el.removeAttribute('contenteditable');
+      el.removeAttribute('data-editable');
+    });
+    editToggle.textContent = '✎ Edit Mode';
+    editToggle.classList.remove('on');
+    editDownload.style.display = 'none';
+    editHint.style.display = 'none';
+  }
+
+  let isEditing = false;
+  editToggle.addEventListener('click', ()=>{
+    isEditing = !isEditing;
+    if(isEditing) enterEditMode(); else exitEditMode();
+  });
+
+  editDownload.addEventListener('click', ()=>{
+    // clone the doc, strip edit-mode artifacts and the toolbar itself
+    const clone = document.documentElement.cloneNode(true);
+    clone.classList.remove('edit-mode');
+    const toolbar = clone.querySelector('#editToolbar');
+    if(toolbar) toolbar.remove();
+    clone.querySelectorAll('[data-editable]').forEach(el=>{
+      el.removeAttribute('contenteditable');
+      el.removeAttribute('data-editable');
+    });
+    const htmlOut = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([htmlOut], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+</script>
+
+</body>
+</html>
